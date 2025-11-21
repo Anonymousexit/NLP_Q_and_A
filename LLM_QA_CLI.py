@@ -1,6 +1,6 @@
 import os
 import re
-from groq import Groq
+import google.generativeai as genai
 
 def preprocess_question(question):
     """
@@ -28,10 +28,14 @@ def preprocess_question(question):
 
 def query_llm(question, api_key):
     """
-    Sends the question to Groq LLM API and returns the response
+    Sends the question to Gemini LLM API and returns the response
     """
     try:
-        client = Groq(api_key=api_key)
+        # Configure Gemini API
+        genai.configure(api_key=api_key)
+        
+        # Create model instance
+        model = genai.GenerativeModel('gemini-pro')
         
         # Construct prompt
         prompt = f"Answer the following question clearly and concisely: {question}"
@@ -39,20 +43,9 @@ def query_llm(question, api_key):
         print(f"\n[Sending to LLM...]")
         
         # Make API call
-        completion = client.chat.completions.create(
-            model="llama-3.1-70b-versatile",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.7,
-            max_tokens=1024,
-        )
+        response = model.generate_content(prompt)
         
-        response = completion.choices[0].message.content
-        return response
+        return response.text
         
     except Exception as e:
         return f"Error: {str(e)}"
@@ -66,11 +59,11 @@ def main():
     print("="*60)
     
     # Get API key from environment or user input
-    api_key = os.getenv('GROQ_API_KEY')
+    api_key = os.getenv('GEMINI_API_KEY')
     
     if not api_key:
         print("\n[Setup Required]")
-        api_key = input("Enter your Groq API Key: ").strip()
+        api_key = input("Enter your Gemini API Key: ").strip()
         
         if not api_key:
             print("Error: API key is required!")
