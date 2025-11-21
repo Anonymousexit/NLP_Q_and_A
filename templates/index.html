@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Q&A System</title>
+    <title>Q&A Intelligence Platform</title>
 
     <style>
         * {
@@ -13,246 +13,487 @@
         }
 
         body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #6a75ff 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #ffffff;
             min-height: 100vh;
-            padding: 24px;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: #1a1a1a;
+            padding: 16px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .container {
-            width: 100%;
-            max-width: 850px;
-            background: #ffffff;
-            border-radius: 18px;
-            box-shadow: 0 10px 45px rgba(0, 0, 0, 0.22);
-            overflow: hidden;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #6a75ff 0%, #764ba2 100%);
-            padding: 36px 20px;
-            text-align: center;
-            color: #fff;
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
+        .logo {
+            font-size: 1.4rem;
             font-weight: 700;
-            margin-bottom: 6px;
+            color: #ffffff;
+            letter-spacing: -0.03em;
         }
 
-        .header p {
-            font-size: 1.05rem;
-            opacity: 0.95;
-        }
-
-        /* Content */
-        .content {
-            padding: 34px;
-        }
-
-        .input-group {
+        .nav-links {
             display: flex;
-            gap: 12px;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #a0a0a0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: #fafafa;
+            padding: 32px;
+            border-radius: 12px;
+            height: fit-content;
+            border: 1px solid #e8e8e8;
+        }
+
+        .sidebar h2 {
+            font-size: 1.1rem;
+            color: #1a1a1a;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .info-section {
             margin-bottom: 24px;
         }
 
+        .info-section h3 {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .info-section p {
+            font-size: 0.95rem;
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Main Content */
+        .main-content {
+            background: #ffffff;
+        }
+
+        .content-header {
+            margin-bottom: 32px;
+        }
+
+        .content-header h1 {
+            font-size: 2.2rem;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .content-header p {
+            font-size: 1.05rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Query Section */
+        .query-section {
+            background: #fafafa;
+            padding: 32px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            border: 1px solid #e8e8e8;
+        }
+
+        .query-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
         #questionInput {
-            flex: 1;
-            padding: 14px 18px;
-            border: 1.8px solid #dcdcdc;
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
             border-radius: 10px;
-            font-size: 15px;
-            transition: border-color 0.25s ease;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: #ffffff;
         }
 
         #questionInput:focus {
-            border-color: #6a75ff;
+            border-color: #1a1a1a;
             outline: none;
         }
 
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+
         #submitBtn {
-            padding: 14px 32px;
-            background: #6a75ff;
-            background: linear-gradient(135deg, #6a75ff 0%, #764ba2 100%);
+            flex: 1;
+            padding: 16px 24px;
+            background: #1a1a1a;
             border: none;
             border-radius: 10px;
             color: white;
-            font-size: 15px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.25s ease;
+            transition: all 0.2s;
+            font-family: inherit;
         }
 
         #submitBtn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+            background: #000000;
         }
 
         #submitBtn:disabled {
-            background: #bcbcbc;
+            background: #d0d0d0;
             cursor: not-allowed;
-            box-shadow: none;
         }
 
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 20px;
-            display: none;
+        .clear-btn {
+            padding: 16px 24px;
+            background: transparent;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            color: #666;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .spinner {
-            width: 38px;
-            height: 38px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #6a75ff;
-            border-radius: 50%;
-            animation: spin 0.9s linear infinite;
-            margin: 0 auto 10px;
+        .clear-btn:hover {
+            border-color: #1a1a1a;
+            color: #1a1a1a;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Error */
-        .error {
-            background: #ffe6e6;
-            color: #c00;
-            border-left: 4px solid #e00;
-            padding: 14px;
-            margin-bottom: 20px;
+        /* Status Bar */
+        .status-bar {
+            background: #f0f0f0;
+            padding: 12px 20px;
             border-radius: 8px;
+            margin-bottom: 32px;
             display: none;
+            align-items: center;
+            gap: 12px;
         }
 
-        /* Results */
-        .results-section {
-            display: none;
-            margin-top: 20px;
+        .status-bar.active {
+            display: flex;
         }
 
-        .result-card {
-            background: #f9fafc;
-            padding: 20px;
-            margin-bottom: 20px;
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: none;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .results-grid.active {
+            display: grid;
+        }
+
+        .section-block {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
             border-radius: 12px;
-            border-left: 4px solid #6a75ff;
+            overflow: hidden;
         }
 
-        .result-card h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #6a75ff;
-            margin-bottom: 10px;
+        .section-header {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 16px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
         }
 
-        .preprocessing-details p {
-            margin: 6px 0;
-            font-size: 0.97rem;
-            color: #444;
+        .section-body {
+            padding: 24px;
         }
 
-        .tokens {
-            margin-top: 8px;
+        .data-row {
+            padding: 12px 0;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            gap: 16px;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-weight: 600;
+            color: #666;
+            min-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .data-value {
+            color: #1a1a1a;
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .token-list {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            margin-top: 8px;
         }
 
-        .token {
-            background: #6a75ff;
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 14px;
+        .token-item {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        .answer-box {
-            background: #fff;
-            padding: 18px;
-            border-radius: 10px;
+        .response-text {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
             font-size: 1rem;
-            color: #333;
-            line-height: 1.55;
+            color: #1a1a1a;
+            line-height: 1.8;
         }
 
-        @media (max-width: 768px) {
-            .input-group {
-                flex-direction: column;
+        @media (max-width: 968px) {
+            .main-container {
+                grid-template-columns: 1fr;
             }
 
-            .content {
-                padding: 24px;
+            .nav-links {
+                display: none;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>LLM Q&A System</h1>
-            <p>Get accurate, intelligent responses instantly</p>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Q&A Platform</div>
+            <div class="nav-links">
+                <a href="#">Dashboard</a>
+                <a href="#">Analytics</a>
+                <a href="#">Settings</a>
+            </div>
         </div>
+    </nav>
 
-        <div class="content">
-
-            <div class="input-group">
-                <input 
-                    type="text"
-                    id="questionInput" 
-                    placeholder="Type your question..."
-                    onkeypress="if(event.key === 'Enter') askQuestion()"
-                >
-                <button id="submitBtn" onclick="askQuestion()">Ask</button>
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2>System Information</h2>
+            
+            <div class="info-section">
+                <h3>About</h3>
+                <p>Advanced natural language processing system powered by large language models.</p>
             </div>
 
-            <div class="error" id="error"></div>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Processing your request...</p>
+            <div class="info-section">
+                <h3>Status</h3>
+                <p>All systems operational</p>
             </div>
 
-            <div class="results-section" id="results">
+            <div class="stats">
+                <div class="stat-card">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">Queries</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Uptime</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Ask Your Question</h1>
+                <p>Submit your query and receive intelligent, context-aware responses powered by advanced AI technology.</p>
+            </div>
+
+            <!-- Query Input -->
+            <div class="query-section">
+                <label class="query-label">Enter Your Question</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="text"
+                        id="questionInput" 
+                        placeholder="What would you like to know?"
+                        onkeypress="if(event.key === 'Enter') askQuestion()"
+                    >
+                </div>
+                <div class="button-group">
+                    <button id="submitBtn" onclick="askQuestion()">Submit Query</button>
+                    <button class="clear-btn" onclick="clearAll()">Clear</button>
+                </div>
+            </div>
+
+            <!-- Alert -->
+            <div class="alert error" id="alert"></div>
+
+            <!-- Status Bar -->
+            <div class="status-bar" id="statusBar">
+                <div class="status-indicator"></div>
+                <span class="status-text">Processing your query...</span>
+            </div>
+
+            <!-- Results -->
+            <div class="results-grid" id="resultsGrid">
                 
-                <div class="result-card">
-                    <h3>Processed Question</h3>
-                    <div class="preprocessing-details" id="preprocessing"></div>
+                <div class="section-block">
+                    <div class="section-header">QUERY ANALYSIS</div>
+                    <div class="section-body" id="analysisBody"></div>
                 </div>
 
-                <div class="result-card">
-                    <h3>Response</h3>
-                    <div class="answer-box" id="answer"></div>
+                <div class="section-block">
+                    <div class="section-header">RESPONSE</div>
+                    <div class="section-body">
+                        <div class="response-text" id="responseText"></div>
+                    </div>
                 </div>
 
             </div>
-        </div>
+        </main>
+
     </div>
 
     <script>
+        let queryCount = 0;
+
         async function askQuestion() {
             const input = document.getElementById("questionInput");
             const question = input.value.trim();
 
             if (!question) {
-                showError("Please enter your question.");
+                showAlert("Please enter a question before submitting.");
                 return;
             }
 
-            // Reset UI
-            document.getElementById("results").style.display = "none";
-            document.getElementById("error").style.display = "none";
-
-            // Begin loading
-            document.getElementById("loading").style.display = "block";
+            hideAlert();
+            document.getElementById("resultsGrid").classList.remove("active");
+            document.getElementById("statusBar").classList.add("active");
             document.getElementById("submitBtn").disabled = true;
 
             try {
@@ -265,16 +506,18 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error || "Something went wrong.");
+                    throw new Error(data.error || "Request failed.");
                 }
 
                 displayResults(data);
+                queryCount++;
+                updateStats();
 
             } catch (error) {
-                showError(error.message);
+                showAlert(error.message);
             }
 
-            document.getElementById("loading").style.display = "none";
+            document.getElementById("statusBar").classList.remove("active");
             document.getElementById("submitBtn").disabled = false;
         }
 
@@ -282,26 +525,53 @@
             const { preprocessing, answer } = data;
 
             const tokenHTML = preprocessing.tokens.map(t => 
-                `<span class="token">${t}</span>`
+                `<span class="token-item">${t}</span>`
             ).join("");
 
-            document.getElementById("preprocessing").innerHTML = `
-                <p><strong>Original:</strong> ${preprocessing.original}</p>
-                <p><strong>Lowercase:</strong> ${preprocessing.lowercase}</p>
-                <p><strong>Cleaned:</strong> ${preprocessing.cleaned}</p>
-                <p><strong>Tokens:</strong></p>
-                <div class="tokens">${tokenHTML}</div>
+            document.getElementById("analysisBody").innerHTML = `
+                <div class="data-row">
+                    <div class="data-label">Original</div>
+                    <div class="data-value">${preprocessing.original}</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Lowercase</div>
+                    <div class="data-value">${preprocessing.lowercase}</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Cleaned</div>
+                    <div class="data-value">${preprocessing.cleaned}</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Tokens</div>
+                    <div class="data-value">
+                        <div class="token-list">${tokenHTML}</div>
+                    </div>
+                </div>
             `;
 
-            document.getElementById("answer").textContent = answer;
-
-            document.getElementById("results").style.display = "block";
+            document.getElementById("responseText").textContent = answer;
+            document.getElementById("resultsGrid").classList.add("active");
         }
 
-        function showError(message) {
-            const err = document.getElementById("error");
-            err.textContent = message;
-            err.style.display = "block";
+        function showAlert(message) {
+            const alert = document.getElementById("alert");
+            alert.textContent = message;
+            alert.style.display = "block";
+        }
+
+        function hideAlert() {
+            document.getElementById("alert").style.display = "none";
+        }
+
+        function clearAll() {
+            document.getElementById("questionInput").value = "";
+            document.getElementById("resultsGrid").classList.remove("active");
+            hideAlert();
+        }
+
+        function updateStats() {
+            const statCards = document.querySelectorAll(".stat-number");
+            statCards[0].textContent = queryCount;
         }
     </script>
 </body>
