@@ -35,7 +35,7 @@ def query_llm(question, api_key):
         genai.configure(api_key=api_key)
         
         # Create model instance
-        model = genai.GenerativeModel('gemini-3-pro-preview')
+        model = genai.GenerativeModel(' GenAI Key')
         
         # Construct prompt
         prompt = f"Answer the following question clearly and concisely: {question}"
