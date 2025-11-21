@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import os
 import re
-from groq import Groq
+import google.generativeai as genai
 
 app = Flask(__name__)
 
@@ -30,29 +30,22 @@ def preprocess_question(question):
 
 def query_llm(question, api_key):
     """
-    Sends the question to Groq LLM API and returns the response
+    Sends the question to Gemini LLM API and returns the response
     """
     try:
-        client = Groq(api_key=api_key)
+        # Configure Gemini API
+        genai.configure(api_key=api_key)
+        
+        # Create model instance
+        model = genai.GenerativeModel('gemini-pro')
         
         # Construct prompt
         prompt = f"Answer the following question clearly and concisely: {question}"
         
         # Make API call
-        completion = client.chat.completions.create(
-            model="llama-3.1-70b-versatile",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.7,
-            max_tokens=1024,
-        )
+        response = model.generate_content(prompt)
         
-        response = completion.choices[0].message.content
-        return response
+        return response.text
         
     except Exception as e:
         return f"Error: {str(e)}"
@@ -73,7 +66,7 @@ def ask():
             return jsonify({'error': 'Please enter a valid question'}), 400
         
         # Get API key from environment variable
-        api_key = os.getenv('GROQ_API_KEY')
+        api_key = os.getenv('GEMINI_API_KEY')
         
         if not api_key:
             return jsonify({'error': 'API key not configured'}), 500
