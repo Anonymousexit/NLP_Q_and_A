@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Q&A System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6a75ff 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 10px 45px rgba(0, 0, 0, 0.22);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #6a75ff 0%, #764ba2 100%);
+            padding: 36px 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 1.05rem;
+            opacity: 0.95;
+        }
+
+        /* Content */
+        .content {
+            padding: 34px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        #questionInput {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1.8px solid #dcdcdc;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: border-color 0.25s ease;
+        }
+
+        #questionInput:focus {
+            border-color: #6a75ff;
+            outline: none;
+        }
+
+        #submitBtn {
+            padding: 14px 32px;
+            background: #6a75ff;
+            background: linear-gradient(135deg, #6a75ff 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+
+        #submitBtn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+        }
+
+        #submitBtn:disabled {
+            background: #bcbcbc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .spinner {
+            width: 38px;
+            height: 38px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #6a75ff;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error */
+        .error {
+            background: #ffe6e6;
+            color: #c00;
+            border-left: 4px solid #e00;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        /* Results */
+        .results-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: #f9fafc;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #6a75ff;
+        }
+
+        .result-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #6a75ff;
+            margin-bottom: 10px;
+        }
+
+        .preprocessing-details p {
+            margin: 6px 0;
+            font-size: 0.97rem;
+            color: #444;
+        }
+
+        .tokens {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .token {
+            background: #6a75ff;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+        }
+
+        .answer-box {
+            background: #fff;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #333;
+            line-height: 1.55;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+
+            .content {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>LLM Q&A System</h1>
+            <p>Get accurate, intelligent responses instantly</p>
+        </div>
+
+        <div class="content">
+
+            <div class="input-group">
+                <input 
+                    type="text"
+                    id="questionInput" 
+                    placeholder="Type your question..."
+                    onkeypress="if(event.key === 'Enter') askQuestion()"
+                >
+                <button id="submitBtn" onclick="askQuestion()">Ask</button>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing your request...</p>
+            </div>
+
+            <div class="results-section" id="results">
+                
+                <div class="result-card">
+                    <h3>Processed Question</h3>
+                    <div class="preprocessing-details" id="preprocessing"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Response</h3>
+                    <div class="answer-box" id="answer"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function askQuestion() {
+            const input = document.getElementById("questionInput");
+            const question = input.value.trim();
+
+            if (!question) {
+                showError("Please enter your question.");
+                return;
+            }
+
+            // Reset UI
+            document.getElementById("results").style.display = "none";
+            document.getElementById("error").style.display = "none";
+
+            // Begin loading
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("submitBtn").disabled = true;
+
+            try {
+                const response = await fetch("/ask", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Something went wrong.");
+                }
+
+                displayResults(data);
+
+            } catch (error) {
+                showError(error.message);
+            }
+
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("submitBtn").disabled = false;
+        }
+
+        function displayResults(data) {
+            const { preprocessing, answer } = data;
+
+            const tokenHTML = preprocessing.tokens.map(t => 
+                `<span class="token">${t}</span>`
+            ).join("");
+
+            document.getElementById("preprocessing").innerHTML = `
+                <p><strong>Original:</strong> ${preprocessing.original}</p>
+                <p><strong>Lowercase:</strong> ${preprocessing.lowercase}</p>
+                <p><strong>Cleaned:</strong> ${preprocessing.cleaned}</p>
+                <p><strong>Tokens:</strong></p>
+                <div class="tokens">${tokenHTML}</div>
+            `;
+
+            document.getElementById("answer").textContent = answer;
+
+            document.getElementById("results").style.display = "block";
+        }
+
+        function showError(message) {
+            const err = document.getElementById("error");
+            err.textContent = message;
+            err.style.display = "block";
+        }
+    </script>
+</body>
+</html>
